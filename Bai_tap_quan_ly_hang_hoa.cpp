@@ -1,155 +1,164 @@
-#include <iostream>
-#include <string>
-#include <iomanip>
-using namespace std;
+using System;
 
-// Cau truc ngay thang nam
-struct Ngay {
-    int ngay, thang, nam;
-};
+class Ngay
+{
+    public int ngay;
+    public int thang;
+    public int nam;
+}
 
-// Cau truc hang hoa
-struct HangHoa {
-    string ma;
-    string ten;
-    Ngay ngayXuat;
-    double gia;
-};
+class HangHoa
+{
+    public string ma = "";
+    public string ten = "";
+    public Ngay ngayxuat = new Ngay();
+    public double gia;
+}
 
-// Cau 2: Nhap mang n hang hoa
-void Nhap(HangHoa a[], int n) {
-    for (int i = 0; i < n; i++) {
-        cout << "\nNhap hang hoa thu " << i + 1 << ":\n";
+class Program
+{
+    static void NhapHangHoa(HangHoa h)
+    {
+        Console.Write("Nhap ma hang: ");
+        h.ma = Console.ReadLine() ?? "";
 
-        cout << "Ma hang: ";
-        getline(cin >> ws, a[i].ma);
+        Console.Write("Nhap ten hang: ");
+        h.ten = Console.ReadLine() ?? "";
 
-        cout << "Ten hang: ";
-        getline(cin >> ws, a[i].ten);
+        Console.Write("Nhap ngay xuat: ");
+        h.ngayxuat = new Ngay();
 
-        cout << "Ngay xuat hang (ngay thang nam): ";
-        cin >> a[i].ngayXuat.ngay
-            >> a[i].ngayXuat.thang
-            >> a[i].ngayXuat.nam;
+        Console.Write("Ngay: ");
+        h.ngayxuat.ngay = int.Parse(Console.ReadLine() ?? "0");
 
-        cout << "Gia xuat hang (trieu dong): ";
-        cin >> a[i].gia;
+         Console.Write("Thang: ");
+        h.ngayxuat.thang = int.Parse(Console.ReadLine() ?? "0");
+
+         Console.Write("Nam: ");
+        h.ngayxuat.nam = int.Parse(Console.ReadLine() ?? "0");
+
+        Console.Write("Nhap gia: ");
+        h.gia = double.Parse(Console.ReadLine() ?? "0");
     }
-}
 
-// Cau 3: Xuat mang n hang hoa
-void Xuat(HangHoa a[], int n) {
-    cout << "\n";
-    cout << left
-         << setw(12) << "Ma hang"
-         << setw(25) << "Ten hang"
-         << setw(15) << "Ngay xuat"
-         << setw(15) << "Gia (trieu)"
-         << endl;
+    static void NhapDanhSach(HangHoa[] ds)
+    {
+        for (int i = 0; i < ds.Length; i++)
+        {
+            Console.WriteLine("\n--- Nhap hang hoa thu " + (i + 1) + "---");
 
-    for (int i = 0; i < n; i++) {
-        cout << left
-             << setw(12) << a[i].ma
-             << setw(25) << a[i].ten;
+            ds[i] = new HangHoa();
 
-        cout << setfill('0')
-             << setw(2) << a[i].ngayXuat.ngay << "/"
-             << setw(2) << a[i].ngayXuat.thang << "/"
-             << setw(4) << a[i].ngayXuat.nam;
-
-        cout << setfill(' ') << "   "
-             << fixed << setprecision(2)
-             << a[i].gia << endl;
+            NhapHangHoa(ds[i]);
+        }
     }
-}
 
-// Ham hoan doi hai hang hoa
-void HoanVi(HangHoa &a, HangHoa &b) {
-    HangHoa temp = a;
-    a = b;
-    b = temp;
-}
+    static void XuatDS(HangHoa[] ds)
+    {
+        Console.WriteLine("\n========== DANH SACH HANG HOA ==========");
 
-// Cau 4: Sap xep chon truc tiep tang dan theo gia
-void SelectionSort(HangHoa a[], int n) {
-    for (int i = 0; i < n - 1; i++) {
-        int min = i;
+        for(int i = 0; i < ds.Length; i++)
+        {
+            Console.WriteLine("\nHang hoa thu " + (i+1));
+            Console.WriteLine("Ma hang: " + ds[i].ma);
+            Console.WriteLine("Ten hang: " + ds[i].ten);
 
-        for (int j = i + 1; j < n; j++) {
-            if (a[j].gia < a[min].gia) {
-                min = j;
+            Console.WriteLine(
+                "Ngay xuat: " + 
+                ds[i].ngayxuat.ngay + "/" +
+                ds[i].ngayxuat.thang + "/" +
+                ds[i].ngayxuat.nam
+            );
+
+            Console.WriteLine("Gia: " + ds[i].gia);
+        }
+    }
+
+    static void SelectionSort(HangHoa[] ds)
+    {
+        for(int i = 0; i < ds.Length; i++)
+        {
+            int min = i;
+
+            for(int j = i + 1; j < ds.Length; j++)
+            {
+                if(ds[j].gia < ds[min].gia)
+                {
+                    min = j;
+                }
+            }
+            HangHoa temp = ds[i];
+            ds[i] = ds[min];
+            ds[min] = temp;
+        }
+    }
+
+        static int BinarySearch(HangHoa[] ds, double giaCanTim)
+    {
+        int left = 0;
+        int right = ds.Length - 1;
+
+        while (left <= right)
+        {
+            int mid = (left + right) / 2;
+
+            if (ds[mid].gia == giaCanTim)
+            {
+                return mid;
+            }
+            else if (ds[mid].gia < giaCanTim)
+            {
+                left = mid + 1;
+            }
+            else
+            {
+                right = mid - 1;
             }
         }
 
-        if (min != i) {
-            HoanVi(a[i], a[min]);
+        return -1;
+    }
+
+    static void Main()
+    {
+        Console.Write("Nhap so luong hang hoa: ");
+        int n = int.Parse(Console.ReadLine() ?? "0");
+
+        HangHoa[] ds = new HangHoa[n];
+
+        NhapDanhSach(ds);
+
+        Console.WriteLine("\n--- DANH SACH BAN DAU ---");
+        XuatDS(ds);
+
+        SelectionSort(ds);
+
+        Console.WriteLine("\n--- DANH SACH SAU KHI SAP XEP ---");
+        XuatDS(ds);
+
+        Console.Write("\nNhap gia can tim: ");
+        double giacantim = double.Parse(Console.ReadLine() ?? "0");
+
+        int vitri = BinarySearch(ds, giacantim);
+
+        if (vitri != -1)
+        {
+            Console.WriteLine("\nTim thay hang hoa: ");
+            Console.WriteLine("Ma hang: " + ds[vitri].ma);
+            Console.WriteLine("Ten hang: " + ds[vitri].ten);
+
+            Console.WriteLine(
+                "Ngay xuat: " +
+                ds[vitri].ngayxuat.ngay + "/" +
+                ds[vitri].ngayxuat.thang + "/" +
+                ds[vitri].ngayxuat.nam
+            );
+
+            Console.WriteLine("Gia: " + ds[vitri].gia);
+        }
+        else
+        {
+            Console.WriteLine("\nKhong tim thay hang hoa co gia " + giacantim);
         }
     }
-}
-
-// Cau 5: Tim kiem nhi phan theo gia
-int BinarySearch(HangHoa a[], int n, double X) {
-    int left = 0;
-    int right = n - 1;
-
-    while (left <= right) {
-        int mid = left + (right - left) / 2;
-
-        if (a[mid].gia == X) {
-            return mid;
-        }
-        else if (a[mid].gia < X) {
-            left = mid + 1;
-        }
-        else {
-            right = mid - 1;
-        }
-    }
-
-    return -1;
-}
-
-// Cau 6: Ham main
-int main() {
-    int n;
-    HangHoa a[100];
-
-    cout << "Nhap so luong hang hoa: ";
-    cin >> n;
-
-    if (n <= 0 || n > 100) {
-        cout << "So luong khong hop le!";
-        return 0;
-    }
-
-    // Nhap hang hoa
-    Nhap(a, n);
-
-    // Xuat danh sach vua nhap
-    cout << "\n===== DANH SACH HANG HOA VUA NHAP =====";
-    Xuat(a, n);
-
-    // Sap xep tang dan theo gia
-    SelectionSort(a, n);
-
-    cout << "\n===== DANH SACH SAU KHI SAP XEP =====";
-    Xuat(a, n);
-
-    // Nhap gia can tim
-    double X;
-    cout << "\nNhap gia hang hoa can tim X: ";
-    cin >> X;
-
-    // Tim kiem nhi phan
-    int vt = BinarySearch(a, n, X);
-
-    if (vt == -1) {
-        cout << "\nKhong tim thay hang hoa co gia " << X;
-    }
-    else {
-        cout << "\nTim thay hang hoa:\n";
-        Xuat(&a[vt], 1);
-    }
-
-    return 0;
 }
